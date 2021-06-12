@@ -1,0 +1,35 @@
+{
+  "extends": [
+    // "airbnb",
+    "prettier",
+    "plugin:node/recommended",
+    "plugin:vue/essential",
+    "eslint:recommended",
+    "@vue/typescript/recommended",
+    "@vue/prettier",
+    "@vue/prettier/@typescript-eslint",
+    "@vue/typescript"
+  ],
+  "plugins": ["prettier"],
+  "rules": {
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      { "ignores": ["modules"] }
+    ],
+    "prettier/prettier": "error",
+    "no-unused-vars": "warn",
+    "no-debugger": "off",
+    "func-names": "off",
+    "no-process-exit": "off",
+    "object-shorthand": "off",
+    "class-methods-use-this": "off"
+  },
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "parser": "@typescript-eslint/parser"
+  }
+}
