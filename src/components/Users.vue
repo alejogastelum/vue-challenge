@@ -1,12 +1,8 @@
 <template>
   <v-container grid-list-md>
     <v-row>
-      <v-col class="d-flex justify-space-between" xs12 sm6 md3>
-        <h2>Cats</h2>
-        <v-btn color="accent" dark rounded class="my-2">
-          <v-icon>mdi-plus</v-icon>
-          Add Cat
-        </v-btn>
+      <v-col>
+        <h2>Users</h2>
       </v-col>
     </v-row>
     <v-row row wrap>
@@ -15,19 +11,26 @@
         xs12
         sm6
         md4
-        v-for="item in getItems"
-        :key="item.id"
+        v-for="user in getUsers"
+        :key="user.id"
       >
         <v-card class="mx-auto">
+          <template slot="progress">
+            <v-progress-linear
+              color="deep-purple"
+              height="10"
+              indeterminate
+            ></v-progress-linear>
+          </template>
           <v-img
             height="250"
-            src="http://placekitten.com/200/300"
+            :src="`https://i.pravatar.cc/300?u=${user.id}`"
           ></v-img>
-          <v-card-title>{{ item.title }}</v-card-title>
+          <v-card-title>{{ user.email }}</v-card-title>
           <v-card-text>
             <v-row align="center" class="mx-0">
               <div class="my-4 text-subtitle-1">
-                {{ item.text }}
+                {{ user.role }}
               </div>
             </v-row>
           </v-card-text>
@@ -45,14 +48,14 @@
 
 <script>
 export default {
-  name: 'Main',
+  name: 'Users',
   computed: {
-    getItems() {
-      return this.$store.getters.getItems
+    getUsers() {
+      return this.$store.getters.getUsers
     },
   },
   created() {
-    this.$store.dispatch('getItems').catch((err) => console.log(err))
+    this.$store.dispatch('getUsers').catch((err) => console.log(err))
   },
 }
 </script>

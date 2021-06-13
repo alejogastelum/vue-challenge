@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import axios from 'axios'
 
-import Vuetify from 'vuetify'
+import vuetify from './plugins/vuetify.ts'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@mdi/font/css/materialdesignicons.css'
@@ -12,6 +12,7 @@ import App from './App.vue'
 
 import Login from './components/Login.vue'
 import Main from './components/Main.vue'
+import Users from './components/Users.vue'
 
 Vue.prototype.$http = axios
 const token = localStorage.getItem('token')
@@ -21,16 +22,13 @@ if (token) {
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
-Vue.use(Vuetify, {
-  theme: {
-    primary: '#7957d5',
-  },
-})
 const store = new Vuex.Store({
   state: {
     status: '',
     token: localStorage.getItem('token') || '',
-    user: {},
+    role: localStorage.getItem('role') || '',
+    users: [],
+    items: [],
   },
   mutations: {
     AUTH_REQUEST(state) {
@@ -39,14 +37,21 @@ const store = new Vuex.Store({
     AUTH_SUCCESS(state, user) {
       state.status = 'success'
       state.token = user.token
-      state.user = user.data
+      state.role = user.role
     },
-    AUTH_ERROR(state) {
+    ERROR(state) {
       state.status = 'error'
+    },
+    USERS_SUCCESS(state, users) {
+      state.users = users
+    },
+    ITEMS_SUCCESS(state, items) {
+      state.items = items
     },
     LOGOUT(state) {
       state.status = ''
       state.token = ''
+      state.role = ''
     },
   },
   actions: {
@@ -59,20 +64,24 @@ const store = new Vuex.Store({
           method: 'POST',
         })
           .then((resp) => {
+            const data = JSON.parse(
+              decodeURIComponent(resp.data.token),
+            )
             const user = {
               token: resp.data.token,
-              data: JSON.parse(decodeURIComponent(resp.data.token)),
+              role: data.role,
             }
-            delete user.data.password
             localStorage.setItem('token', user.token)
+            localStorage.setItem('role', user.role)
             axios.defaults.headers.common['Authorization'] =
               user.token
             commit('AUTH_SUCCESS', user)
             resolve(resp)
           })
           .catch((err) => {
-            commit('AUTH_ERROR')
+            commit('ERROR')
             localStorage.removeItem('token')
+            localStorage.removeItem('role')
             reject(err)
           })
       })
@@ -85,7 +94,47 @@ const store = new Vuex.Store({
         resolve()
       })
     },
-    getUsers({ commit }, user) {
+    getUsers({ commit }) {
+      if (!store.getters.isAdmin) {
+        return
+      }
+      return new Promise((resolve, reject) => {
+        commit('AUTH_REQUEST')
+        axios({
+          url: 'http://localhost:9090/api/v1/users',
+          method: 'GET',
+        })
+          .then((resp) => {
+            const users = resp.data
+            commit('USERS_SUCCESS', users)
+            resolve(resp)
+          })
+          .catch((err) => {
+            commit('ERROR')
+            localStorage.removeItem('token')
+            reject(err)
+          })
+      })
+    },
+    getItems({ commit }) {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_REQUEST')
+        axios({
+          url: 'http://localhost:9090/api/v1/items',
+          method: 'GET',
+        })
+          .then((resp) => {
+            const items = resp.data
+            commit('ITEMS_SUCCESS', items)
+            resolve(resp)
+          })
+          .catch((err) => {
+            commit('ERROR')
+            reject(err)
+          })
+      })
+    },
+    postItem({ commit }, user) {
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
@@ -101,7 +150,7 @@ const store = new Vuex.Store({
             resolve(resp)
           })
           .catch((err) => {
-            commit('AUTH_ERROR')
+            commit('ERROR')
             localStorage.removeItem('token')
             reject(err)
           })
@@ -109,8 +158,11 @@ const store = new Vuex.Store({
     },
   },
   getters: {
+    isAdmin: (state) => state.role === 'admin',
     isLoggedIn: (state) => !!state.token,
     authStatus: (state) => state.status,
+    getUsers: (state) => state.users,
+    getItems: (state) => state.items,
   },
 })
 
@@ -123,6 +175,10 @@ const router = new VueRouter({
     {
       path: '/',
       component: Main,
+    },
+    {
+      path: '/users',
+      component: Users,
       meta: {
         requiresAuth: true,
       },
@@ -144,7 +200,7 @@ router.beforeEach((to, from, next) => {
 
 Vue.config.productionTip = false
 new Vue({
-  vuetify: new Vuetify(),
+  vuetify,
   router,
   store,
   el: '#app',

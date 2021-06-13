@@ -6,14 +6,14 @@
           v-model="drawer"
           fixed
           app
-          color="pink"
+          color="secondary"
           dark
         >
-          <v-toolbar flat color="pink">
+          <v-toolbar flat color="primary">
             <v-list>
               <v-list-item>
                 <v-list-item-title class="title">
-                  Cat Repo
+                  Menu
                 </v-list-item-title>
               </v-list-item>
             </v-list>
@@ -29,7 +29,8 @@
             </v-list-item>
             <v-list-item
               @click="drawer = false"
-              v-if="!$route.path.includes('login')"
+              v-if="$store.getters.isAdmin"
+              to="/users"
             >
               <v-list-item-action>
                 <v-icon>people</v-icon>
@@ -59,11 +60,22 @@
           <v-toolbar-title>Cat Repo</v-toolbar-title>
         </v-app-bar>
       </template>
-      <v-main>
+      <v-main color="secondary">
         <keep-alive :include="['Login']">
           <router-view></router-view>
         </keep-alive>
       </v-main>
+      <v-footer color="primary" padless fixed>
+        <v-row justify="center" no-gutters>
+          <v-col
+            class="primary lighten-2 py-4 text-center white--text"
+            cols="12"
+          >
+            {{ new Date().getFullYear() }} —
+            <strong>Cat Repo</strong>
+          </v-col>
+        </v-row>
+      </v-footer>
     </v-app>
   </div>
 </template>
@@ -77,7 +89,7 @@ export default {
     }
   },
   computed: {
-    isLoggedIn: function () {
+    isLoggedIn: () => {
       return this.$store.getters.isLoggedIn
     },
   },
