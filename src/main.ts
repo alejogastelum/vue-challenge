@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import axios from 'axios'
+import moment from 'moment'
 
 import vuetify from './plugins/vuetify.ts'
 import 'vuetify/dist/vuetify.min.css'
@@ -9,12 +10,13 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 import App from './App.vue'
-
 import Login from './components/Login.vue'
 import Main from './components/Main.vue'
 import Users from './components/Users.vue'
 
 Vue.prototype.$http = axios
+Vue.prototype.$moment = moment
+
 const token = localStorage.getItem('token')
 if (token) {
   Vue.prototype.$http.defaults.headers.common['Authorization'] = token
@@ -28,7 +30,7 @@ const store = new Vuex.Store({
     token: localStorage.getItem('token') || '',
     role: localStorage.getItem('role') || '',
     users: [],
-    items: [],
+    items: [] as any,
   },
   mutations: {
     AUTH_REQUEST(state) {
@@ -47,6 +49,12 @@ const store = new Vuex.Store({
     },
     ITEMS_SUCCESS(state, items) {
       state.items = items
+    },
+    POST_ITEM_SUCCESS(state, item) {
+      state.items.push(item)
+    },
+    PUT_ITEM_SUCCESS(state, item) {
+      state.items[item.id] = item
     },
     LOGOUT(state) {
       state.status = ''
@@ -134,24 +142,40 @@ const store = new Vuex.Store({
           })
       })
     },
-    postItem({ commit }, user) {
+    postItem({ commit }, item) {
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
-          url: 'http://localhost:9090/api/v1/auth',
-          data: user,
+          url: 'http://localhost:9090/api/v1/items',
+          data: item,
           method: 'POST',
         })
           .then((resp) => {
-            const token = resp.data.token
-            localStorage.setItem('token', token)
-            axios.defaults.headers.common['Authorization'] = token
-            commit('AUTH_SUCCESS', token)
+            const item = resp.data
+            commit('POST_ITEM_SUCCESS', item)
             resolve(resp)
           })
           .catch((err) => {
             commit('ERROR')
-            localStorage.removeItem('token')
+            reject(err)
+          })
+      })
+    },
+    putItem({ commit }, item) {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_REQUEST')
+        axios({
+          url: `http://localhost:9090/api/v1/items/${item.id}`,
+          data: item,
+          method: 'PUT',
+        })
+          .then((resp) => {
+            const item = resp.data
+            commit('PUT_ITEM_SUCCESS', item)
+            resolve(resp)
+          })
+          .catch((err) => {
+            commit('ERROR')
             reject(err)
           })
       })

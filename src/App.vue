@@ -1,15 +1,14 @@
 <template>
   <div id="app">
-    <v-app>
+    <v-app :dark="darkMode">
       <template v-if="!$route.path.includes('login')">
         <v-navigation-drawer
           v-model="drawer"
           fixed
           app
           color="secondary"
-          dark
         >
-          <v-toolbar flat color="primary">
+          <v-toolbar color="accent" dark flat>
             <v-list>
               <v-list-item>
                 <v-list-item-title class="title">
@@ -42,6 +41,12 @@
           </v-list>
           <template v-slot:append>
             <v-list>
+              <v-list-item>
+                <v-switch
+                  label="Dark Mode"
+                  v-model="$vuetify.theme.dark"
+                ></v-switch>
+              </v-list-item>
               <v-list-item @click="logout">
                 <v-list-item-action>
                   <v-icon>logout</v-icon>
@@ -53,22 +58,22 @@
             </v-list>
           </template>
         </v-navigation-drawer>
-        <v-app-bar color="primary" dark fixed app>
+        <v-app-bar color="secondary" fixed app>
           <v-app-bar-nav-icon
             @click.stop="drawer = !drawer"
           ></v-app-bar-nav-icon>
           <v-toolbar-title>Cat Repo</v-toolbar-title>
         </v-app-bar>
       </template>
-      <v-main color="secondary">
+      <v-main color="secondary" class="pb-16">
         <keep-alive :include="['Login']">
           <router-view></router-view>
         </keep-alive>
       </v-main>
-      <v-footer color="primary" padless fixed>
+      <v-footer color="primary" padless>
         <v-row justify="center" no-gutters>
           <v-col
-            class="primary lighten-2 py-4 text-center white--text"
+            class="primary py-4 text-center white--text"
             cols="12"
           >
             {{ new Date().getFullYear() }} —
@@ -87,6 +92,9 @@ export default {
     return {
       drawer: false,
     }
+  },
+  created() {
+    this.$vuetify.theme.dark = false
   },
   computed: {
     isLoggedIn: () => {

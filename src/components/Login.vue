@@ -39,7 +39,6 @@
 <script>
 export default {
   data() {
-    // eslint-disable-line no-debugger
     return {
       email: '',
       password: '',
