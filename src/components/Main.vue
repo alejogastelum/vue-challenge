@@ -94,11 +94,7 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            color="red darken-1"
-            text
-            @click="dialogEdit = false"
-          >
+          <v-btn color="red darken-1" text @click="deleteItem">
             Delete
           </v-btn>
           <v-spacer></v-spacer>
@@ -172,7 +168,11 @@ export default {
   name: 'Main',
   computed: {
     getItems: function () {
-      return this.$store.getters.getItems
+      const storedItems = this.$store.getters.getItems
+      const filteredItems = storedItems.filter(function (value) {
+        return value !== null
+      })
+      return filteredItems
     },
   },
   created: function () {
@@ -186,7 +186,11 @@ export default {
       const date = this.$moment(new Date()).format('YYYY-MM-DD')
       this.$store
         .dispatch('postItem', { title, text, date })
-        .then()
+        .then((res) =>
+          this.$store
+            .dispatch('getItems')
+            .catch((err) => console.log(err)),
+        )
         .catch((err) => console.log(err))
     },
     putItem: function () {
@@ -202,7 +206,26 @@ export default {
       this.idEdit = ''
       this.$store
         .dispatch('putItem', item)
-        .then((res) => this.getItems())
+        .then((res) =>
+          this.$store
+            .dispatch('getItems')
+            .catch((err) => console.log(err)),
+        )
+        .catch((err) => console.log(err))
+    },
+    deleteItem: function () {
+      this.dialogEdit = false
+      const id = this.idEdit
+      this.titleEdit = ''
+      this.textEdit = ''
+      this.idEdit = ''
+      this.$store
+        .dispatch('deleteItem', id)
+        .then((res) =>
+          this.$store
+            .dispatch('getItems')
+            .catch((err) => console.log(err)),
+        )
         .catch((err) => console.log(err))
     },
     openEdit: function (item) {

@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import moment from 'moment'
 
-import vuetify from './plugins/vuetify.ts'
+import vuetify from './plugins/vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@mdi/font/css/materialdesignicons.css'
@@ -13,6 +13,8 @@ import App from './App.vue'
 import Login from './components/Login.vue'
 import Main from './components/Main.vue'
 import Users from './components/Users.vue'
+
+import Item from './models/item.ts'
 
 Vue.prototype.$http = axios
 Vue.prototype.$moment = moment
@@ -30,7 +32,7 @@ const store = new Vuex.Store({
     token: localStorage.getItem('token') || '',
     role: localStorage.getItem('role') || '',
     users: [],
-    items: [] as any,
+    items: [] as Item,
   },
   mutations: {
     AUTH_REQUEST(state) {
@@ -55,6 +57,15 @@ const store = new Vuex.Store({
     },
     PUT_ITEM_SUCCESS(state, item) {
       state.items[item.id] = item
+    },
+    DELETE_ITEM_SUCCESS(state, id) {
+      const currentItems = state.items
+      const newItems = currentItems.filter(function (value: Item) {
+        if (value !== null) {
+          return value.id !== id
+        }
+      })
+      state.items = newItems
     },
     LOGOUT(state) {
       state.status = ''
@@ -172,6 +183,24 @@ const store = new Vuex.Store({
           .then((resp) => {
             const item = resp.data
             commit('PUT_ITEM_SUCCESS', item)
+            resolve(resp)
+          })
+          .catch((err) => {
+            commit('ERROR')
+            reject(err)
+          })
+      })
+    },
+    deleteItem({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_REQUEST')
+        axios({
+          url: `http://localhost:9090/api/v1/items/${id}`,
+          data: id,
+          method: 'DELETE',
+        })
+          .then((resp) => {
+            commit('DELETE_ITEM_SUCCESS', id)
             resolve(resp)
           })
           .catch((err) => {
