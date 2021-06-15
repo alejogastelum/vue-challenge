@@ -6,9 +6,9 @@
           v-model="drawer"
           fixed
           app
-          color="secondary"
+          color="primary"
         >
-          <v-toolbar color="accent" dark flat>
+          <v-toolbar color="accent" flat>
             <v-list>
               <v-list-item>
                 <v-list-item-title class="title">
@@ -44,7 +44,9 @@
               <v-list-item>
                 <v-switch
                   label="Dark Mode"
-                  v-model="$vuetify.theme.dark"
+                  v-model="darkMode"
+                  inset
+                  color="white"
                 ></v-switch>
               </v-list-item>
               <v-list-item @click="logout">
@@ -58,24 +60,21 @@
             </v-list>
           </template>
         </v-navigation-drawer>
-        <v-app-bar color="secondary" fixed app>
+        <v-app-bar color="primary" fixed app>
           <v-app-bar-nav-icon
             @click.stop="drawer = !drawer"
           ></v-app-bar-nav-icon>
           <v-toolbar-title>Cat Repo</v-toolbar-title>
         </v-app-bar>
       </template>
-      <v-main color="secondary" class="pb-16">
+      <v-main color="primary" class="pb-16 mt-8 mx-4">
         <keep-alive :include="['Login']">
           <router-view></router-view>
         </keep-alive>
       </v-main>
-      <v-footer color="primary" padless>
+      <v-footer color="accent" padless>
         <v-row justify="center" no-gutters>
-          <v-col
-            class="primary py-4 text-center white--text"
-            cols="12"
-          >
+          <v-col class="py-4 text-center" cols="12">
             {{ new Date().getFullYear() }} —
             <strong>Cat Repo</strong>
           </v-col>
@@ -91,24 +90,37 @@ export default {
   data() {
     return {
       drawer: false,
+      darkMode: this.$store.getters.isDarkMode,
     }
   },
   created() {
-    this.$vuetify.theme.dark = false
+    this.$vuetify.theme.dark = this.$store.getters.isDarkMode
   },
-  computed: {
-    isLoggedIn: () => {
-      return this.$store.getters.isLoggedIn
+  watch: {
+    darkMode: function () {
+      this.setDarkMode(this.darkMode)
     },
   },
   methods: {
     logout: function () {
       this.$store.dispatch('logout').then(() => {
+        this.drawer = false
         this.$router.push('/login')
+      })
+    },
+    setDarkMode: function (option) {
+      this.$store.dispatch('setDarkMode', option).then(() => {
+        this.$vuetify.theme.dark = option
       })
     },
   },
 }
 </script>
 
-<style></style>
+<style>
+.v-application,
+.v-application .headline,
+.v-application .title {
+  font-family: 'Archivo Black', sans-serif !important;
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
-  <v-container grid-list-md>
+  <v-container>
     <v-row>
-      <v-col class="d-flex justify-space-between" xs12 sm6 md3>
+      <v-col class="d-flex justify-space-between">
         <h2>Cats</h2>
         <!-- <v-btn color="accent" dark rounded class="my-2">
           <v-icon>mdi-plus</v-icon>
@@ -111,36 +111,39 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-row row wrap>
+    <v-row>
       <v-col
-        d-flex
-        xs12
-        sm6
-        md4
+        class="d-flex"
+        cols="12"
+        xs="12"
+        sm="6"
+        md="4"
         v-for="item in getItems"
         :key="item.id"
       >
-        <v-card class="mx-auto">
+        <v-card class="d-flex flex-column" width="100%">
           <v-img
             height="250"
+            max-height="250"
             src="http://placekitten.com/200/300"
           ></v-img>
           <v-card-title>{{ item.title }}</v-card-title>
           <v-card-text>
             <v-row align="center" class="mx-0">
+              <div color="secondary" class="my-4 text-subtitle-3">
+                {{ item.date }}
+              </div>
+            </v-row>
+            <v-row align="center" class="mx-0">
               <div class="my-4 text-subtitle-1">
                 {{ item.text }}
               </div>
             </v-row>
-            <v-row align="center" class="mx-0">
-              <div class="my-4 text-subtitle-3">
-                {{ item.date }}
-              </div>
-            </v-row>
           </v-card-text>
+          <v-spacer></v-spacer>
           <v-divider class="mx-4"></v-divider>
           <v-card-actions>
-            <v-btn color="primary" @click.stop="openEdit(item)" text>
+            <v-btn color="accent" @click.stop="openEdit(item)" text>
               Edit
             </v-btn>
           </v-card-actions>
@@ -163,9 +166,8 @@ export default {
     title: '',
     text: '',
     id: '',
-    darkMode: false,
   }),
-  name: 'Main',
+  name: 'Items',
   computed: {
     getItems: function () {
       const storedItems = this.$store.getters.getItems
@@ -237,3 +239,5 @@ export default {
   },
 }
 </script>
+
+<style></style>

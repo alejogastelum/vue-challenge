@@ -11,7 +11,7 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import App from './App.vue'
 import Login from './components/Login.vue'
-import Main from './components/Main.vue'
+import Items from './components/Items.vue'
 import Users from './components/Users.vue'
 
 import Item from './models/item.ts'
@@ -31,6 +31,8 @@ const store = new Vuex.Store({
     status: '',
     token: localStorage.getItem('token') || '',
     role: localStorage.getItem('role') || '',
+    darkMode:
+      localStorage.getItem('darkMode') === 'true' ? true : false,
     users: [],
     items: [] as Item,
   },
@@ -72,6 +74,9 @@ const store = new Vuex.Store({
       state.token = ''
       state.role = ''
     },
+    SET_DARK_MODE(state, option) {
+      state.darkMode = !!option
+    },
   },
   actions: {
     login({ commit }, user) {
@@ -106,7 +111,7 @@ const store = new Vuex.Store({
       })
     },
     logout({ commit }) {
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<void>((resolve) => {
         commit('LOGOUT')
         localStorage.removeItem('token')
         delete axios.defaults.headers.common['Authorization']
@@ -209,6 +214,14 @@ const store = new Vuex.Store({
           })
       })
     },
+    setDarkMode({ commit }, option) {
+      return new Promise<void>((resolve) => {
+        commit('SET_DARK_MODE', option)
+        localStorage.setItem('darkMode', option)
+        console.log(option)
+        resolve()
+      })
+    },
   },
   getters: {
     isAdmin: (state) => state.role === 'admin',
@@ -216,6 +229,7 @@ const store = new Vuex.Store({
     authStatus: (state) => state.status,
     getUsers: (state) => state.users,
     getItems: (state) => state.items,
+    isDarkMode: (state) => state.darkMode,
   },
 })
 
@@ -227,7 +241,7 @@ const router = new VueRouter({
     },
     {
       path: '/',
-      component: Main,
+      component: Items,
     },
     {
       path: '/users',

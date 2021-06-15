@@ -7,12 +7,12 @@ const vuetify = new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: colors.grey.darken4,
-        secondary: colors.yellow.base,
+        primary: colors.yellow.base,
+        secondary: colors.deepPurple.base,
         accent: colors.pink.base,
       },
       dark: {
-        primary: colors.green.base,
+        primary: colors.deepPurple.base,
         secondary: colors.yellow.base,
         accent: colors.pink.base,
       },
