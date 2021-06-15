@@ -14,8 +14,6 @@ import Login from './components/Login.vue'
 import Items from './components/Items.vue'
 import Users from './components/Users.vue'
 
-import Item from './models/item.ts'
-
 Vue.prototype.$http = axios
 Vue.prototype.$moment = moment
 
@@ -34,7 +32,7 @@ const store = new Vuex.Store({
     darkMode:
       localStorage.getItem('darkMode') === 'true' ? true : false,
     users: [],
-    items: [] as Item,
+    items: [] as any,
   },
   mutations: {
     AUTH_REQUEST(state) {
@@ -54,7 +52,7 @@ const store = new Vuex.Store({
     ITEMS_SUCCESS(state, items) {
       state.items = items
     },
-    POST_ITEM_SUCCESS(state, item) {
+    POST_ITEM_SUCCESS(state, item: unknown) {
       state.items.push(item)
     },
     PUT_ITEM_SUCCESS(state, item) {
@@ -62,7 +60,7 @@ const store = new Vuex.Store({
     },
     DELETE_ITEM_SUCCESS(state, id) {
       const currentItems = state.items
-      const newItems = currentItems.filter(function (value: Item) {
+      const newItems = currentItems.filter(function (value) {
         if (value !== null) {
           return value.id !== id
         }
