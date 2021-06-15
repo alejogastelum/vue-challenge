@@ -26,8 +26,10 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/models/item.js",
-    "src/plugins/vuetify.js"
+    "src/*.ts",
+    "src/plugins/vuetify.js",
+    "src/store.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["./src/shims-tsx.d.ts", "./src/shims-vue.d.ts"]
 }

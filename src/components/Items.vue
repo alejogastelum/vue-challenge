@@ -111,6 +111,30 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogSuccess" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Success!</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col> Data was sent successfully! </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey darken-1"
+            text
+            @click="dialogSuccess = false"
+          >
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-row>
       <v-col
         class="d-flex"
@@ -125,7 +149,7 @@
           <v-img
             height="250"
             max-height="250"
-            src="http://placekitten.com/200/300"
+            :src="`http://placekitten.com/200/30${item.id}`"
           ></v-img>
           <v-card-title>{{ item.title }}</v-card-title>
           <v-card-text>
@@ -186,6 +210,8 @@ export default {
       const title = this.title
       const text = this.text
       const date = this.$moment(new Date()).format('YYYY-MM-DD')
+      this.title = ''
+      this.text = ''
       this.$store
         .dispatch('postItem', { title, text, date })
         .then((res) =>

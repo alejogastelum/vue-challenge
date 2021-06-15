@@ -72,7 +72,7 @@
           <router-view></router-view>
         </keep-alive>
       </v-main>
-      <v-footer color="accent" padless>
+      <v-footer padless>
         <v-row justify="center" no-gutters>
           <v-col class="py-4 text-center" cols="12">
             {{ new Date().getFullYear() }} —
@@ -122,5 +122,9 @@ export default {
 .v-application .headline,
 .v-application .title {
   font-family: 'Archivo Black', sans-serif !important;
+}
+
+.v-sheet.v-footer {
+  border-top: 1px solid #666;
 }
 </style>
