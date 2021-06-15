@@ -57,5 +57,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alejogastelum/vue-challenge.git"
+  },
+  "engines": {
+    "node": ">=12.18.3"
   }
 }
