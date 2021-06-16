@@ -36,6 +36,9 @@ const router = new VueRouter({
     {
       path: '/',
       component: Items,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/users',

@@ -3,10 +3,6 @@
     <v-row>
       <v-col class="d-flex justify-space-between">
         <h2>Cats</h2>
-        <!-- <v-btn color="accent" dark rounded class="my-2">
-          <v-icon>mdi-plus</v-icon>
-          Add Cat
-        </v-btn> -->
         <v-btn
           color="accent"
           dark
@@ -136,6 +132,20 @@
       </v-card>
     </v-dialog>
     <v-row>
+      <v-btn
+        id="fabMobile"
+        class="d-md-none"
+        v-bind:class="{ 'd-none': fabHide || false }"
+        color="accent"
+        @click.stop="dialog = true"
+        dark
+        fixed
+        bottom
+        right
+        fab
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
       <v-col
         class="d-flex"
         cols="12"
@@ -190,6 +200,7 @@ export default {
     title: '',
     text: '',
     id: '',
+    fabHide: false,
   }),
   name: 'Items',
   computed: {
@@ -203,6 +214,13 @@ export default {
   },
   created: function () {
     this.$store.dispatch('getItems').catch((err) => console.log(err))
+  },
+  mounted() {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+
+  destroyed() {
+    window.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
     postItem: function () {
@@ -261,6 +279,15 @@ export default {
       this.titleEdit = item.title
       this.textEdit = item.text
       this.idEdit = item.id
+    },
+    handleScroll(event) {
+      let y = window.scrollY
+      console.log(`${y} scroll handled: ${this.fabHide}`)
+      if (y >= 200) {
+        this.fabHide = false
+      } else {
+        this.fabHide = true
+      }
     },
   },
 }

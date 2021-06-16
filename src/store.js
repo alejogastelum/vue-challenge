@@ -4,6 +4,8 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
+const host = 'https://calm-refuge-56537.herokuapp.com'
+
 export const store = new Vuex.Store({
   state: {
     status: '',
@@ -61,7 +63,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
-          url: 'http://localhost:9090/api/v1/auth',
+          url: `${host}/api/v1/auth`,
           data: user,
           method: 'POST',
         })
@@ -103,7 +105,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
-          url: 'http://localhost:9090/api/v1/users',
+          url: `${host}/api/v1/users`,
           method: 'GET',
         })
           .then((resp) => {
@@ -122,7 +124,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
-          url: 'http://localhost:9090/api/v1/items',
+          url: `${host}/api/v1/items`,
           method: 'GET',
         })
           .then((resp) => {
@@ -140,7 +142,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
-          url: 'http://localhost:9090/api/v1/items',
+          url: `${host}/api/v1/items`,
           data: item,
           method: 'POST',
         })
@@ -159,7 +161,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
-          url: `http://localhost:9090/api/v1/items/${item.id}`,
+          url: `${host}/api/v1/items/${item.id}`,
           data: item,
           method: 'PUT',
         })
@@ -178,7 +180,7 @@ export const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('AUTH_REQUEST')
         axios({
-          url: `http://localhost:9090/api/v1/items/${id}`,
+          url: `${host}/api/v1/items/${id}`,
           data: id,
           method: 'DELETE',
         })

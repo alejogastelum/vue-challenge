@@ -5,7 +5,7 @@
         <v-navigation-drawer
           v-model="drawer"
           fixed
-          app
+          temporary
           color="primary"
         >
           <v-toolbar color="accent" flat>
@@ -93,9 +93,15 @@ export default {
       darkMode: this.$store.getters.isDarkMode,
     }
   },
+  beforeCreate() {
+    if (this.$store.state.isLoggedIn) {
+      this.$router.push({ name: 'login' })
+    }
+  },
   created() {
     this.$vuetify.theme.dark = this.$store.getters.isDarkMode
   },
+
   watch: {
     darkMode: function () {
       this.setDarkMode(this.darkMode)
