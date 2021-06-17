@@ -126,7 +126,8 @@ export default {
 <style>
 .v-application,
 .v-application .headline,
-.v-application .title {
+.v-application .title,
+.v-application .v-card__title > * {
   font-family: 'Archivo Black', sans-serif !important;
 }
 

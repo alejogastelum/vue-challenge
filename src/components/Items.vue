@@ -21,14 +21,21 @@
               <v-container>
                 <v-row>
                   <v-col>
-                    <v-form>
+                    <v-form
+                      v-model="valid"
+                      @submit.prevent="postItem"
+                    >
                       <v-text-field
+                        :rules="textRules"
+                        required
                         name="title"
                         label="Title"
                         type="text"
                         v-model="title"
                       ></v-text-field>
                       <v-textarea
+                        :rules="textRules"
+                        required
                         name="text"
                         label="Text"
                         type="text"
@@ -51,7 +58,13 @@
               >
                 Cancel
               </v-btn>
-              <v-btn color="accent darken-1" text @click="postItem">
+              <v-btn
+                color="accent darken-1"
+                text
+                @click="postItem"
+                type="submit"
+                :disabled="!isComplete"
+              >
                 Add Cat
               </v-btn>
             </v-card-actions>
@@ -201,6 +214,9 @@ export default {
     text: '',
     id: '',
     fabHide: false,
+    titleRules: [(v) => !!v || 'Title is required'],
+    textRules: (v) => !!v || 'Text is required',
+    valid: false,
   }),
   name: 'Items',
   computed: {
@@ -210,6 +226,9 @@ export default {
         return value !== null
       })
       return filteredItems
+    },
+    isComplete() {
+      return this.title && this.text
     },
   },
   created: function () {
@@ -282,7 +301,6 @@ export default {
     },
     handleScroll(event) {
       let y = window.scrollY
-      console.log(`${y} scroll handled: ${this.fabHide}`)
       if (y >= 200) {
         this.fabHide = false
       } else {
